@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewData["Title"] = "菜单表单";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+
+@section styles{
+    <link href="~/js/plugins/tree/tree.css" rel="stylesheet" />
+    <style type="text/css">
+        .col-sm-3 {
+            width: 25% !important;
+            float: left;
+            padding-top: 7px;
+            margin-bottom: 0;
+            text-align: right;
+        }
+
+        .col-sm-9 {
+            width: 73% !important;
+            float: left;
+        }
+
+        .ibox-content {
+            padding-bottom: 15px !important;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <form class="form-horizontal">
+                    <input type="hidden" id="id" name="id" />
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">上级菜单：</label>
+                        <div class="col-sm-8">
+                            <div id="parentId" name="parentId" type="selectTree" class="ui-select"></div>
+                            @*<input type="text" name="DeviceId" placeholder="上级菜单" class="form-control">*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单名称：<font face="宋体">*</font></label>
+                        <div class="col-sm-8">
+                            <input type="text" id="name" name="name" placeholder="请输入名称" class="form-control" isvalid="yes" checkexpession="NotNull" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单地址：<font face="宋体">*</font></label>
+                        <div class="col-sm-8">
+                            <input type="text" id="url" name="url" placeholder="请输入地址" class="form-control" isvalid="yes" checkexpession="NotNull" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">排序号：<font face="宋体">*</font></label>
+                        <div class="col-sm-8">
+                            <input type="text" id="order" name="order" class="form-control" isvalid="yes" checkexpession="Num" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">图标：</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="icon" name="icon" placeholder="请输入图标" class="form-control" >
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/plugins/tree/tree.js"></script>
+    <script src="~/js/admin.js"></script>
+    <script type="text/javascript">
+        var menuForm = function () {
+            var _self = this;
+            _self.id = request("id");
+
+            _self.InitData = function () {
+                //上级
+                $("#parentId").ComboBoxTree({
+                    url: "../../Admin/Menu/GetTreeList",
+                    description: "==请选择==",
+                    height: "150px"
+                });
+                if (_self.id) {
+                    $.SetForm({
+                        url: "Get",
+                        param: { id: _self.id },
+                        success: function (data) {
+                            $("form").SetWebControls(data);
+                        }
+                    });
+                }
+            }
+
+
+            return {
+                init: function () {
+                    _self.InitData();
+                },
+                acceptClick: function () {
+                    if (!$("form").Validform()) {
+                        return false;
+                    }
+                    var data = $("form").GetWebControls();
+                    $.SaveForm({
+                        url: "SaveForm",
+                        param: data,
+                        //loading: "正在保存数据...",
+                        success: function (data) {
+                            $.currentIframe().menuIndex.init();
+                            $.currentIframe().$("#gridTable").trigger("reloadGrid");
+                        }
+                    });
+                }
+            }
+        }();
+        menuForm.init();
+    </script>
+}
+
+

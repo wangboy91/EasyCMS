@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewData["Title"] = "文件夹表单";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">名称：<font face="宋体">*</font></label>
+                        <div class="col-sm-8">
+                            <input type="text" id="name" class="form-control" placeholder="名称" isvalid="yes" checkexpession="NotNull" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">编码：<font face="宋体">*</font></label>
+                        <div class="col-sm-8">
+                            <input type="text" id="code" class="form-control" placeholder="编码" isvalid="yes" checkexpession="NotNull" autocomplete="off">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        var folderForm = function () {
+            var _self = this;
+            _self.form = request("form");
+            return {
+                acceptClick: function () {
+                    if (!$("form").Validform()) {
+                        return false;
+                    }
+                    var data = $("form").GetWebControls();
+                    $.SaveForm({
+                        url: "/Platform/OssFile/AddFolder",
+                        param: data,
+                        //loading: "正在保存数据...",
+                        success: function (data) {
+                            if (_self.form) {
+                                if (_self.form == "file")
+                                    $.currentIframe().index.getGrid();
+                            } else {
+                                top.frames[top.$("#imageForm>iframe").attr("name")].imageForm.getFolder();
+                            }
+
+                        }
+                    });
+                }
+            };
+        }();
+    </script>
+}
+

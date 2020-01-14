@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.1" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="aliyun-netCore-oss-sdk">
+      <HintPath>AliLib\DLL\aliyun-netCore-oss-sdk.dll</HintPath>
+    </Reference>
+    <Reference Include="aliyun-netCore-sdk-core">
+      <HintPath>AliLib\DLL\aliyun-netCore-sdk-core.dll</HintPath>
+    </Reference>
+    <Reference Include="aliyun-netCore-sdk-dysmsapi">
+      <HintPath>AliLib\DLL\aliyun-netCore-sdk-dysmsapi.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

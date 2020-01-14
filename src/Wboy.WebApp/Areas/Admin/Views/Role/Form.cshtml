@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewData["Title"] = "角色表单";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+@section styles{
+    <style type="text/css">
+        .col-sm-3 {
+            width: 25% !important;
+            float: left;
+            padding-top: 7px;
+            margin-bottom: 0;
+            text-align: right;
+        }
+
+        .col-sm-9 {
+            width: 73% !important;
+            float: left;
+        }
+
+        .ibox-content {
+            padding-bottom: 15px !important;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <form class="form-horizontal">
+                    <input type="hidden" id="id" name="id" />
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">角色名称：<font face="宋体">*</font></label>
+                        <div class="col-sm-9">
+                            <input type="text" id="name" name="name" placeholder="请输入名称" class="form-control" isvalid="yes" checkexpession="NotNull" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">角色描述：</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/plugins/tree/tree.js"></script>
+    <script type="text/javascript">
+        var roleForm = function () {
+            var _self = this;
+            _self.id = request("id");
+            _self.InitData = function () {
+                if (_self.id) {
+                    $.SetForm({
+                        url: "Get",
+                        param: { id: _self.id },
+                        success: function (data) {
+                            $("form").SetWebControls(data);
+                        }
+                    });
+                }
+            }
+
+            return {
+                init: function () {
+                    _self.InitData();
+                },
+                acceptClick: function () {
+                    if (!$("form").Validform()) {
+                        return false;
+                    }
+                    var data = $("form").GetWebControls();
+                    $.SaveForm({
+                        url: "SaveForm",
+                        param: data,
+                        //loading: "正在保存数据...",
+                        success: function (data) {
+                            $.currentIframe().$("#gridTable").trigger("reloadGrid");
+                        }
+                    });
+                }
+            }
+        }();
+        roleForm.init();
+    </script>
+}
+

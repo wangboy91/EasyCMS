@@ -1,0 +1,195 @@
+﻿
+@{
+    ViewData["Title"] = "菜单首页";
+    Layout = "~/Views/Shared/_LayoutTable.cshtml";
+}
+@section styles{
+    <link href="~/js/plugins/tree/tree.css" rel="stylesheet" />
+}
+<div class="row">
+    <div class="col-sm-2">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>菜单</h5>
+            </div>
+            <div class="ibox-content" style="padding:0px 0px 20px 5px;">
+                <div id="itemTree"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="ibox">
+            <div class="ibox-title">
+                <div class="input-group" style="max-width:250px;display:inline-table;">
+                    <input type="text" id="txt_Keyword" class="form-control input-sm">
+                    <span class="input-group-btn">
+                        <a id="btn_Search" class="btn btn-white btn-sm"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+                <div class="ibox-tools">
+                    <div class="btn-group">
+                        <a class="btn btn-white btn-sm" onclick="menuIndex.refresh()"><i class="fa fa-refresh"></i> 刷新</a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-white btn-sm" onclick="menuIndex.create()"><i class="fa fa-plus"></i> 新增</a>
+                        <a class="btn btn-white btn-sm" onclick="menuIndex.edit()"><i class="fa fa-pencil"></i> 编辑</a>
+                        <a class="btn btn-white btn-sm" onclick="menuIndex.delete()"><i class="fa fa-trash-o"></i> 删除</a>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="jqGrid_wrapper">
+                    <table id="gridTable"></table>
+                    <div id="gridPager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="~/js/plugins/tree/tree.js"></script>
+    <script type="text/javascript">
+        var menuIndex = function () {
+            var _self = this;
+
+            _self.parentId = null;
+            //初始化页面
+            _self.InitialPage = function () {
+                //resize重设(表格、树形)宽高
+                $(window).resize(function (e) {
+                    window.setTimeout(function () {
+                        $('#gridTable').setGridWidth(($('.jqGrid_wrapper').width()));
+                        $("#gridTable").setGridHeight($(window).height() - 208);
+
+                        $("#itemTree").height($(window).height() - 109);
+                    }, 200);
+                    e.stopPropagation();
+                });
+            }
+            _self.GetTree = function () {
+                var item = {
+                    height: $(window).height() - 109,
+                    url: "GetTreeList",
+                    onnodeclick: function (item) {
+                        _self.parentId = item.id;
+                        $('#btn_Search').trigger("click");
+                    }
+                };
+                $("#itemTree").treeview(item);
+            };
+            _self.GetGrid = function () {
+                var selectedRowIndex = 0;
+                $.jgrid.defaults.styleUI = "Bootstrap";
+                var $gridTable = $('#gridTable');
+                $gridTable.jqGrid({
+                    url: 'GetPageList',
+                    datatype: "json",
+                    height: $(window).height() - 208,
+                    autowidth: true,
+                    colModel: [
+                        { label: '主键', name: 'id', hidden: true },
+                        {
+                            label: '图标', name: 'icon', index: 'Icon', width: 20, formatter: function (cellValue, options, rowObject) {
+                                return '<i class="' + cellValue + '"></i>';
+                            }
+                        },
+                        { label: '名称', name: 'name', index: 'name', width: 120 },
+                       
+                        {
+                            label: '类型', name: 'type', index: 'type', width: 80, formatter: function (cellValue, options, rowObject) {
+                                return rowObject.typeName;
+                            }
+                        },
+                        { label: 'Url',name: 'url', index: 'url', width: 150 },
+                        { label: '序号',name: 'order', index: 'order', width: 60 }
+                    ],
+                    rowNum: 30,
+                    rowList: [30, 50, 100],
+                    pager: "#gridPager",
+                    rownumbers: true,
+                    viewrecords: true,
+                    onSelectRow: function () {
+                        selectedRowIndex = $("#" + this.id).getGridParam('selrow');
+                    },
+                    gridComplete: function () {
+                        $("#" + this.id).setSelection(selectedRowIndex, false);
+                    }
+                });
+
+                //查询事件
+                $("#btn_Search").click(function () {
+                    $gridTable.jqGrid('setGridParam', {
+                        postData: { keywords: $("#txt_Keyword").val(), ParentId: _self.parentId }, page: 1
+                    }).trigger('reloadGrid');
+                });
+                //查询回车
+                $('#txt_Keyword').bind('keypress', function (event) {
+                    if (event.keyCode == "13") {
+                        $('#btn_Search').trigger("click");
+                    }
+                });
+            }
+
+
+            return {
+                init: function () {
+                    _self.InitialPage();
+                    _self.GetTree();
+                    _self.GetGrid();
+
+                },
+                create: function () {
+                    dialogOpen({
+                        id:'form',
+                        title: '添加菜单',
+                        width: '500px',
+                        height: '400px',
+                        url: '@Url.Action("Form")',
+                        callBack: function (iframe) {
+                            iframe.menuForm.acceptClick();
+                        }
+                    });
+                },
+                edit: function () {
+                    var id = $("#gridTable").jqGridRowValue("id");
+                    if (id) {
+                            dialogOpen({
+                            id:'form',
+                            title: '编辑菜单',
+                            width: '500px',
+                            height: '400px',
+                            url: '@Url.Action("Form")?id=' + id,
+                            callBack: function (iframe) {
+                                iframe.menuForm.acceptClick();
+                            }
+                        });
+                    }
+                    else {
+                        dialogMsg("请选择需要编辑的菜单！", 3);
+                        return false;
+                    }
+
+                },
+                delete: function () {
+                    var id = $("#gridTable").jqGridRowValue("id");
+                    if (id) {
+                        $.RemoveForm({
+                            url: "RemoveForm",
+                            param: { id: id },
+                            success: function (data) {
+                                $("#gridTable").trigger("reloadGrid");
+                            }
+                        });
+                    } else {
+                        dialogMsg("请选择需要删除的菜单！", 3);
+                        return false;
+                    }
+                },
+                refresh: function () {
+                    location.reload();
+                }
+            }
+        }();
+        menuIndex.init();
+    </script>
+}

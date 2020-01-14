@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewData["Title"] = "Visits";
+    Layout = "~/Views/Shared/_LayoutTable.cshtml";
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <div class="input-group" style="max-width:250px;display:inline-table;">
+                    <input type="text" id="txt_Keyword" class="form-control input-sm">
+                    <span class="input-group-btn">
+                        <a id="btn_Search" class="btn btn-white btn-sm"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div id="jqGrid_wrapper">
+                    <table id="gridTable"></table>
+                    <div id="gridPager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        var pageIndex = function () {
+            var _self = this;
+
+            //初始化页面
+            _self.InitialPage = function () {
+                //resize重设(表格、树形)宽高
+                $(window).resize(function (e) {
+                    window.setTimeout(function () {
+                        $('#gridTable').setGridWidth(($('#jqGrid_wrapper').width()));
+                        $("#gridTable").setGridHeight($(window).height() - 208);
+                    }, 200);
+                    e.stopPropagation();
+                });
+            }
+            _self.GetGrid = function () {
+                var selectedRowIndex = 0;
+                $.jgrid.defaults.styleUI = "Bootstrap";
+                var $gridTable = $('#gridTable');
+                $gridTable.jqGrid({
+                    url: '@Url.Action("VisitsList")',
+                    datatype: "json",
+                    height: $(window).height() - 208,
+                    autowidth: true,
+                    colModel: [
+                        { label: '主键', name: 'id', hidden: true },
+                        { label: '名称', name: 'loginName', index: 'loginName', width: 120 },
+                        { label: 'Url', name: 'url', index: 'url', width: 60 },
+                        { label: 'Ip', name: 'ip', index: 'ip', width: 60 },
+                        { label: '时间', name: 'visitDate', index: 'visitDate', width: 60 }
+                    ],
+                    rowNum: 30,
+                    rowList: [30, 50, 100],
+                    pager: "#gridPager",
+                    rownumbers: true,
+                    viewrecords: true,
+                    onSelectRow: function () {
+                        selectedRowIndex = $("#" + this.id).getGridParam('selrow');
+                    },
+                    gridComplete: function () {
+                        $("#" + this.id).setSelection(selectedRowIndex, false);
+                    }
+                });
+
+                //查询事件
+                $("#btn_Search").click(function () {
+                    $gridTable.jqGrid('setGridParam', {
+                        postData: { keywords: $("#txt_Keyword").val() }, page: 1
+                    }).trigger('reloadGrid');
+                });
+                //查询回车
+                $('#txt_Keyword').bind('keypress', function (event) {
+                    if (event.keyCode == "13") {
+                        $('#btn_Search').trigger("click");
+                    }
+                });
+            }
+
+
+            return {
+                init: function () {
+                    _self.InitialPage();
+                    _self.GetGrid();
+                }
+
+            }
+        }();
+        pageIndex.init();
+    </script>
+}
+

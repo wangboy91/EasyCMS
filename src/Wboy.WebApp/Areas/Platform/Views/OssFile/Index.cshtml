@@ -1,0 +1,478 @@
+﻿@{
+    ViewData["Title"] = "内容资源";
+    Layout = "~/Views/Shared/_LayoutTable.cshtml";
+}
+<style>
+    .image-list {
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .file .file-name {
+        text-align: left;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding: 5px;
+        background-color: #fff;
+    }
+
+    .selected_mask {
+        position: absolute;
+        display: none;
+        width: 100%;
+        height: 100px;
+        top: 0;
+        left: 0;
+    }
+
+        .selected_mask .selected_mask_inner {
+            width: 100%;
+            height: 100%;
+            -moz-opacity: .6;
+            -khtml-opacity: .6;
+            opacity: .6;
+            background-color: #000;
+            filter: alpha(opacity=60);
+        }
+
+        .selected_mask .selected_mask_icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: transparent url(https://res.wx.qq.com/mpres/htmledition/images/icon/common/icon_card_selected3a7b38.png) no-repeat 0 0;
+            width: 100%;
+            height: 100%;
+            vertical-align: middle;
+            display: inline-block;
+            background-position: 50% 50%;
+        }
+    .img_pick {
+        width: 100%;
+        text-align: center;
+    }
+    .icon_loading_small.white {
+        background: transparent url(https://res.wx.qq.com/mpres/htmledition/images/icon/loading/icon40_loading_white3a7b38.gif) no-repeat 0 0;
+    }
+    .img_pick .icon_loading_small {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -20px;
+        margin-left: -20px;
+    }
+    .icon_loading_small {
+        width: 40px;
+        height: 40px;
+        vertical-align: middle;
+        display: inline-block;
+        line-height: 100px;
+        overflow: hidden;
+    }
+    .page {
+        text-align: right;
+        padding: 10px 16px 0px;
+    }
+
+    .page_nav_area {
+        letter-spacing: 4px;
+    }
+
+    .page_nav_area, .goto_area {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 12px;
+    }
+
+    .pagination .btn {
+        min-width: 0;
+    }
+
+    .btn.page_prev, .btn.page_next {
+        position: relative;
+        font-size: 0;
+        letter-spacing: -5px;
+        background-color: #fff;
+        background-image: -moz-linear-gradient(top,#fff 0,#fff 100%);
+        background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#fff));
+        background-image: -webkit-linear-gradient(top,#fff 0,#fff 100%);
+        background-image: -o-linear-gradient(top,#fff 0,#fff 100%);
+        background-image: linear-gradient(to bottom,#fff 0,#fff 100%);
+        border-color: #e7e7eb;
+        color: #222;
+        height: 30px;
+        line-height: 30px;
+        width: auto;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+        .btn.page_prev .arrow, .btn.page_next .arrow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -6px;
+            margin-left: -3px;
+        }
+
+    .page_next .arrow {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-width: 6px;
+        border-style: dashed;
+        border-color: transparent;
+        border-right-width: 0;
+        border-left-color: #919191;
+        border-left-style: solid;
+    }
+
+    .page_prev .arrow {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-width: 6px;
+        border-style: dashed;
+        border-color: transparent;
+        border-left-width: 0;
+        border-right-color: #919191;
+        border-right-style: solid;
+    }
+
+    .page_nav_area .btn {
+        letter-spacing: normal;
+    }
+
+    .page_num {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 14px;
+        letter-spacing: normal;
+    }
+
+    .goto_area {
+        margin-left: 8px;
+    }
+
+        .goto_area input[type="text"] {
+            vertical-align: middle;
+            width: 75px;
+            height: 30px;
+            line-height: 22px;
+            padding: 4px 0;
+            border: 1px solid #e7e7eb;
+            box-shadow: none;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            text-align: center;
+            font-size: 14px;
+            margin-right: 4px;
+            margin-top: -1px;
+            outline: none;
+        }
+
+    .btn.page_go {
+        height: 30px;
+        line-height: 30px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        border-color: #e7e7eb;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-2">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h4>文件目录</h4>
+            </div>
+            <div class="ibox-content">
+                <div class="list-group" id="folder"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="ibox">
+            <div class="ibox-title">
+                <div class="btn-group">
+                    <a class="btn btn-white btn-sm" onclick="reload();"><i class="fa fa-refresh"></i> 刷新</a>
+                </div>
+                <div class="btn-group">
+                    <label class="btn btn-white btn-sm" onclick="index.openClick()">
+                        <i class="fa fa-upload"></i> 上传图片
+                    </label>
+                    <input type="file" id="file" accept="image/bmp,image/png,image/jpeg,image/jpg,image/gif" style="display: none;">
+                    <a class="btn btn-white btn-sm" onclick="index.addFolderClick()" id="btn-addFolder"><i class="fa fa-plus"></i> 新建分组</a>
+                    <a class="btn btn-white btn-sm" onclick="index.deleteClick();" id="btn-delete"><i class="fa fa-trash-o"></i> 删除</a>
+                </div>
+            </div>
+            <div class="ibox-content" id="image-content" style="border-left:1px solid #e7eaec;">
+                <div class="img_pick" style="display: none;">
+                    <i class="icon_loading_small white js_loading"></i>
+                </div>
+                <div class="image-list" id="list"></div>
+                <div class="page" style="display: block;">
+                    <span class="page_nav_area" style="display: inline-block;">
+                        <a onclick="index.prevPageClick()" class="btn page_prev" style="display: none;"><i class="arrow"></i></a>
+                        <span class="page_num">
+                            <sapn id="page-index">1</sapn>
+                            <span class="num_gap">/</span>
+                            <sapn id="page-all">3</sapn>
+                        </span>
+                        <a onclick="index.nextPageClick()" class="btn page_next" style="display: inline-block;"><i class="arrow"></i></a>
+                    </span>
+                    <span class="goto_area" style="display: inline-block;">
+                        <input type="text" id="page-go">
+                        <a onclick="index.goPageClick()" class="btn btn-white page_go">跳转</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        var index = function () {
+            var _self = this;
+            _self.param = {
+                rows: 30,
+                page: 1,
+                sidx: "AddTime desc",
+                sord: "asc",
+                folderId: ""
+            };
+            _self.InitialPage = function () {
+                $("#folder").height($(window).height() - 147);
+                $("#list").height($(window).height() - 167);
+                $(".img_pick").height($(window).height() - 167);
+                $("#image-content").height($(window).height() - 127);
+                //resize重设(表格、树形)宽高
+                $(window).resize(function (e) {
+                    window.setTimeout(function () {
+                        $("#folder").height($(window).height() - 147);
+                        $("#list").height($(window).height() - 167);
+                        $(".img_pick").height($(window).height() - 167);
+                        $("#image-content").height($(window).height() - 127);
+                    }, 200);
+                    e.stopPropagation();
+                });
+            };
+            _self.GetFolder = function () {
+                $.SetForm({
+                    url: "/Platform/OssFile/GetAllFolder",
+                    success: function (data) {
+                        var html = '';
+                        var all = 0;
+                        $.each(data, function (index, ele) {
+                            all += ele.number;
+                            html += '<a class="list-group-item" data-code="' + ele.code + '"  data-id="' + ele.id + '">' + ele.name + '(<span class="folder-number">' + ele.number + '</span>)</a>';
+                        });
+                        html = '<a class="list-group-item active" data-code=""  data-id="">全部图片(<span class="folder-number">' + all + '</span>)</a>' + html;
+                        $("#folder").html(html);
+                    }
+                });
+            };
+            _self.GetGrid = function () {
+                $(".img_pick").css("display", "block");
+                $(".image-list").css("display", "none");
+                $(".page").css("display", "none");
+                $.SetForm({
+                    url: "/Platform/OssFile/GetEnablePicturePageList",
+                    param: _self.param,
+                    success: function (data) {
+                        setTimeout(function () {
+                            var html = '';
+                            $.each(data.rows, function (index, ele) {
+                                html += '<div class="file-box" data-id="' + ele.id + '" data-path="' + ele.savePath + '">\
+                                                    <div class="file" >\
+                                                        <a>\
+                                                            <div class="selected_mask">\
+                                                                <div class="selected_mask_inner" ></div > <div class="selected_mask_icon"></div>\
+                                                            </div >\
+                                                            <div class="image">\
+                                                                <img alt="image" class="img-responsive" src="'+ ele.savePath + '">\
+                                                        </div>\
+                                                        <div class="file-name" title="'+ ele.fileName + '">' + ele.fileName + '<br>\
+                                                                <small>添加时间：'+ formatDate(ele.addTime, "yyyy-MM-dd hh:mm:ss") + '</small>\
+                                                        </div>\
+                                                    </a>\
+                                                </div>\
+                                            </div>';
+                            });
+                            $("#list").html(html);
+                            $("#page-index").text(data.page);
+                            if (data.total == 0) {
+                                $(".image-list").css("background", "url(/images/nodata.jpg) center center no-repeat");
+                            } else {
+                                $(".image-list").css("background", "none");
+                            }
+                            if (data.total == 0 || data.total == 1) {
+                                $(".page_nav_area").css("display", "none");
+                                $(".goto_area").css("display", "none");
+                            } else {
+                                $(".page_nav_area").css("display", "inline-block");
+                                $(".goto_area").css("display", "inline-block");
+                                $("#page-all").text(data.total);
+                                if (data.total == _self.param.page)
+                                    $(".page_next").css("display", "none");
+                                else
+                                    $(".page_next").css("display", "inline-block");
+                                if (_self.param.page == 1)
+                                    $(".page_prev").css("display", "none");
+                                else
+                                    $(".page_prev").css("display", "inline-block");
+                            }
+                            $(".img_pick").css("display", "none");
+                            $(".image-list").css("display", "block");
+                            $(".page").css("display", "block");
+                        }, 200);
+                    }
+                });
+            };
+            _self.Bind = function () {
+                $(".list-group").on("click", ".list-group-item", function () {
+                    $.each($("#folder").find(".active"), function (index, ele) {
+                        $(ele).removeClass("active");
+                    });
+                    $(this).addClass("active");
+                    _self.param.folderId = $(this).data("id");
+                    _self.param.page = 1;
+                    _self.GetGrid();
+                });
+                $(".image-list").on("click", ".file", function () {
+                    if ($(this).parent().hasClass("select")) {
+                        $(this).children().children(".selected_mask").css('display', 'none');
+                        $(this).parent().removeClass("select");
+                        return;
+                    }
+                    $(this).children().children(".selected_mask").css('display', 'block');
+                    $(this).parent().addClass("select");
+                });
+                //文件选定绑定
+                $("#file").change(function (e) {
+                    var files = $(this)[0].files;
+                    if (files.length === 0)
+                        return false;
+                    if (files.length === 1) {
+                        var data = new FormData();
+                        data.append("file", files[0]);
+                        //获取文件夹信息
+                        data.append("folderId", $("#folder>.active").data("id"));
+                        data.append("folder", $("#folder>.active").data("code"));
+                        $.ajax({
+                            url: "/Platform/OssFile/UploadImage",
+                            data: data,
+                            type: "Post",
+                            dataType: "json",
+                            cache: false,//上传文件无需缓存
+                            processData: false,//用于对data参数进行序列化处理 这里必须false
+                            contentType: false, //必须
+                            success: function (result) {
+                                if (result.type == 1) {
+                                    _self.param.page = 1;
+                                    _self.GetGrid();
+                                    $("#folder>.active .folder-number").text(eval($("#folder>.active .folder-number").text()) + 1);
+                                    $("#folder>.folder-all .folder-number").text(eval($("#folder>.folder-all .folder-number").text()) + 1);
+                                    dialogMsg("上传成功", 1);
+                                } else {
+                                    dialogMsg(result.message, 2);
+                                }
+                            },
+                            error: function () {
+                                dialogMsg("上传失败", 2);
+                            }
+                        });
+                    }
+                    //清除文件
+                    $("#file").clone();
+                    //清除文件
+                    $("#file").after($("#file").clone().val(""));
+                });
+            };
+
+            return {
+                init: function () {
+                    _self.InitialPage();
+                    _self.GetFolder();
+                    _self.GetGrid();
+                    _self.Bind();
+                },
+                openClick: function () {
+                    var folder = $("#folder>.active").data("code");
+                    var folderId = $("#folder>.active").data("id");
+                    if (folder == "" && folderId == "") {
+                        dialogAlert("请选择有效文件夹", 7);
+                        return;
+                    }
+                    $("#file").click();
+                },
+                deleteClick: function () {
+                    var selectObjs = $(".image-list>.file-box.select");
+                    if (selectObjs.length > 0) {
+                        var fileIds = [];
+                        var filesPath = [];
+                        $.each(selectObjs, function (index, ele) {
+                            fileIds.push($(ele).data("id"));
+                            filesPath.push($(ele).data("path"));
+                        });
+                        $.RemoveForm({
+                            url: "/Platform/OssFile/Delete",
+                            param: { ids: fileIds, filesPath: filesPath },
+                            success: function (data) {
+                                reload();
+                            }
+                        });
+                    } else {
+                        dialogAlert("请选择要删除的图片", 7);
+                        return;
+                    }
+                },
+                addFolderClick: function () {
+                    dialogOpen({
+                        id: 'addFolderForm',
+                        title: '创建文件夹',
+                        width: '380px',
+                        height: '231px',
+                        url: "/Platform/OssFile/FolderForm?form=file",
+                        callBack: function (iframe) {
+                            iframe.folderForm.acceptClick();
+                        }
+                    });
+                },
+                getGrid: function () {
+                    _self.GetGrid();
+                },
+                nextPageClick: function () {
+                    _self.param.page += 1;
+                    _self.GetGrid();
+                },
+                prevPageClick: function () {
+                    _self.param.page -= 1;
+                    _self.GetGrid();
+                },
+                goPageClick: function () {
+                    var goPage = $("#page-go").val();
+                    if (goPage == "")
+                        return;
+                    var r = /^\+?[1-9][0-9]*$/;
+                    if (!r.test(goPage)) {
+                        dialogMsg("请输入正确的页码", 7);
+                        return;
+                    }
+                    var allPage = eval($("#page-all").text());
+                    if (allPage < eval(goPage)) {
+                        dialogMsg("请输入正确的页码", 7);
+                        return;
+                    }
+                    _self.param.page = eval(goPage);
+                    _self.GetGrid();
+                }
+            };
+        }();
+        index.init();
+    </script>
+}
+

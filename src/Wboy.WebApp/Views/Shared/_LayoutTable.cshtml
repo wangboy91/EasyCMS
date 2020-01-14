@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>@ViewBag.Title</title>
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html"/><![endif]-->
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="~/css/bootstrap.min14ed.css" rel="stylesheet" />
+    <link href="~/css/font-awesome.min93e3.css" rel="stylesheet" />
+    <link href="~/css/plugins/jqgrid/ui.jqgridffe4.css" rel="stylesheet" />
+    <link href="~/css/style.min.css?v=4.1.0" rel="stylesheet">
+    <link href="~/css/plugins/select2/select2.css" rel="stylesheet" />
+    <link href="~/css/select2.css" rel="stylesheet" />
+    <style type="text/css">
+        .ibox {
+            margin-bottom: 0px;
+        }
+
+        .ibox-title {
+            border-width: 0px;
+        }
+
+        .ibox-content {
+            padding-left: 15px;
+            padding-right: 14px;
+        }
+
+        .ibox-tools a {
+            color: none !important;
+        }
+
+        td i.fa-toggle-off {
+            color: #aaa;
+        }
+
+        td i.fa-toggle-on {
+            color: #449d44;
+        }
+
+        .btn-tools {
+            display: inline-block;
+            height: 22px;
+            vertical-align: middle;
+        }
+
+            .btn-tools a:first-child {
+                border-left: 1px solid #eee;
+            }
+
+            .btn-tools a {
+                /*color: #6f6f6f;*/
+                font-size: 14px;
+                display: block;
+                float: left;
+                margin: 0;
+                padding: 0 5px;
+                /*width: 50px;*/
+                height: 20px;
+                line-height: 20px;
+                text-align: left;
+                border: 1px solid #eee;
+                border-left: none;
+                background: #fff;
+                overflow: hidden;
+            }
+
+                .btn-tools a.selected {
+                    color: #797979;
+                }
+
+        .btn-tools a {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .ui-jqgrid .ui-jqgrid-bdiv {
+            overflow-x: auto;
+        }
+
+        ::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-responsive {
+            overflow-x: hidden !important;
+        }
+
+        .tag-list li a {
+            padding: 3px 5px;
+            margin-right: 3px;
+            margin-top: 3px;
+            margin-bottom: 3px;
+        }
+    </style>
+    @RenderSection("styles", false)
+</head>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content  animated fadeInRight">
+            @RenderBody()
+            @Html.AntiForgeryToken()
+    </div>
+    <script src="~/js/jquery.min.js?v=2.1.4"></script>
+    <script src="~/js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="~/js/plugins/peity/jquery.peity.min.js"></script>
+    <script src="~/css/plugins/select2/select2.min.js"></script>
+    <script src="~/js/plugins/jqgrid/i18n/grid.locale-cnffe4.js"></script>
+    <script src="~/js/plugins/jqgrid/jquery.jqGrid.minffe4.js"></script>
+    <script src="~/js/content.min.js?v=1.0.0"></script>
+    <script src="~/js/common.js"></script>
+    <script type="text/javascript">
+        $.jgrid.defaults.styleUI = "Bootstrap";
+    </script>
+    @RenderSection("scripts", false)
+</body>
+</html>

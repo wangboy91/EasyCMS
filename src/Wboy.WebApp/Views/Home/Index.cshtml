@@ -1,0 +1,184 @@
+﻿@using Wboy.Application.Dto.AdminModule.Dto
+@{
+    List<MenuDto> menus = ViewBag.Menus;
+}
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="ajax-loader" style="cursor: progress; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: #fff; z-index: 10000; overflow: hidden;">
+    <img src="~/images/ajax-loader.gif" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; margin: auto;" />
+</div>
+<!--载进度条start-->
+<div id="loading_background" class="loading_background" style="display: none;"></div>
+<div id="loading_manage">
+    正在拼了命为您加载…
+</div>
+<!--载进度条end-->
+<!--左侧导航开始-->
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="nav-close">
+        <i class="fa fa-times-circle"></i>
+    </div>
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <span><img alt="image" class="img-circle" src="~/images/profile_small.jpg" /></span>
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <span class="clear">
+                            <span class="block m-t-xs"><strong class="font-bold">@ViewBag.Name</strong></span>
+                            <span class="text-muted text-xs block">@ViewBag.Account<b class="caret"></b></span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                        <li>
+                            <a onclick="ChangePwd('@ViewBag.id')">修改密码</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="@Url.Action("Logout")">安全退出</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="logo-element">
+                    Bh
+                </div>
+            </li>
+            @if (menus != null)
+            {
+                foreach (var module in menus.OrderBy(x => x.Order).Where(item => item.Type == 1))
+                {
+                    <li>
+                        <a>
+                            <i class="@module.Icon"></i>
+                            <span class="nav-label">@module.Name</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        @if (menus.Any(x => x.ParentId == module.Id))
+                        {
+                            <ul class="nav nav-second-level">
+                                @foreach (var menu in menus.OrderBy(x => x.Order).Where(x => x.ParentId == module.Id))
+                                {
+                                    <li>
+                                        <a class="J_menuItem" href="@menu.Url" data-index="@menu.Id"><i class="@menu.Icon"></i>@menu.Name</a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            }
+            @*<li>
+                <a>
+                    <i class="fa fa-cube"></i>
+                    <span class="nav-label">内容管理</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a class="J_menuItem" href="/Content/Column/Index" data-index="1"><i class="fa fa-bars"></i>栏目类别</a>
+                        <a class="J_menuItem" href="/Content/Tags/Index" data-index="2"><i class="fa fa-tags"></i>标签管理</a>
+                        <a class="J_menuItem" href="/Content/ArticleSource/Index" data-index="3"><i class="fa fa-link"></i>内容来源</a>
+                        <a class="J_menuItem" href="/Content/ArticleResource/Index" data-index="4"><i class="fa fa-file-text-o"></i>文章素材</a>
+                        <a class="J_menuItem" href="/Content/ArticlePublic/Index" data-index="5"><i class="fa fa-paper-plane-o"></i>公开文章</a>
+                        <a class="J_menuItem" href="/Content/AD/Index" data-index="6"><i class="fa fa-television"></i>广告管理</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a>
+                    <i class="fa fa-cube"></i>
+                    <span class="nav-label">平台管理</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a class="J_menuItem" href="/HelpIns/Column/Index" data-index="1"><i class="fa fa-bars"></i>图片管理</a>
+                        <a class="J_menuItem" href="/Platform/HelpIns/Index" data-index="2"><i class="fa fa-tags"></i>攻略管理</a>
+                    </li>
+                </ul>
+            </li>*@
+        </ul>
+    </div>
+</nav>
+<!--左侧导航结束-->
+<!--右侧部分开始-->
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                <form role="search" class="navbar-form-custom" method="post" action="">
+                    <div class="form-group">
+                        <input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search" id="top-search">
+                    </div>
+                </form>
+            </div>
+        </nav>
+    </div>
+    <div class="row content-tabs">
+        <button class="roll-nav roll-left J_tabLeft">
+            <i class="fa fa-backward"></i>
+        </button>
+        <nav class="page-tabs J_menuTabs">
+            <div class="page-tabs-content">
+                <a href="javascript:;" class="active J_menuTab" data-id="/Home/Default">首页</a>
+            </div>
+        </nav>
+        <button class="roll-nav roll-right J_tabRight">
+            <i class="fa fa-forward"></i>
+        </button>
+        <div class="btn-group roll-nav roll-right">
+            <button class="dropdown J_tabClose" data-toggle="dropdown">
+                关闭操作<span class="caret"></span>
+            </button>
+            <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                <li class="J_tabShowActive">
+                    <a>定位当前选项卡</a>
+                </li>
+                <li class="divider"></li>
+                <li class="J_tabCloseAll">
+                    <a>关闭全部选项卡</a>
+                </li>
+                <li class="J_tabCloseOther">
+                    <a>关闭其他选项卡</a>
+                </li>
+            </ul>
+        </div>
+        <a href="#" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a>
+    </div>
+    <div class="row J_mainContent" id="content-main">
+        <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="/Home/Default" frameborder="0" data-id="/Home/Default" seamless></iframe>
+    </div>
+    <div class="footer">
+        <div class="pull-right">
+            &copy; 2017-2018 <a href="#" target="_blank">Boxhi</a>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+
+<script type="text/javascript">
+    function ChangePwd (id) {
+        if (id) {
+            top.layer.open({
+                type: 2,
+                area: ['450px', '400px'],
+                title: '修改密码',
+                //fix: false, //不固定
+                //maxmin: true,
+                content: ['/Admin/User/ChangePwd?id=' + id, 'yes'],
+                btn: ['确定', '取消'],
+                yes: function (index, layero) { //或者使用btn1
+                    layero.find("iframe")[0].contentWindow.userForm.acceptClick(index);
+                },
+                cancel: function (index) { //或者使用btn2
+                    //按钮【按钮二】的回调
+                    parent.layer.close(index);
+                }
+            });
+        }
+
+    }
+</script>

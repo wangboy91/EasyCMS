@@ -1,0 +1,540 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    /*text-decoration: none;
+    outline: none;
+    border: 0;*/
+    /*font-style: normal;*/
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    vertical-align: middle
+}
+
+button, input, select, textarea {
+    resize: none;
+    outline: none;
+    overflow: hidden
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+html {
+    background: #fff;
+    overflow-x: hidden
+}
+
+.clear {
+    clear: both;
+    height: 0;
+}
+
+.clear-fix {
+    *zoom: 1;
+    _zoom: 1
+}
+
+    .clear-fix:after {
+        content: "\20";
+        display: block;
+        height: 0;
+        clear: both;
+    }
+
+
+html {
+    font-size: 12px
+}
+
+html, body {
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    /*height: 100%;*/
+    /*font-family: 'Merriweather', sans-serif;*/
+}
+
+.display-none {
+    display: none !important;
+}
+
+.display-block {
+    display: block !important;
+}
+
+.display-show {
+    display: inline-block !important;
+}
+
+.display-flex {
+    display: -webkit-box; /* 老版本语法: Safari, iOS, Android browser, older WebKit browsers. */
+    display: -moz-box; /* 老版本语法: Firefox (buggy) */
+    display: -ms-flexbox; /* 混合版本语法: IE 10 */
+    display: -webkit-flex; /* 新版本语法: Chrome 21+ */
+    display: flex; /* 新版本语法: Opera 12.1, Firefox 22+ */
+    -webkit-box-pack: center;
+    -moz-justify-content: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -moz-align-items: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.main {
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+.main-body {
+    position: relative;
+}
+
+@media screen and (max-width:321px) {
+    html {
+        font-size: 8px !important;
+    }
+}
+
+@media screen and (max-width:719px) {
+    html {
+        font-size: 12px !important;
+    }
+
+    .main-body {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width:720px) {
+    html {
+        font-size: 16px !important;
+    }
+
+    .main-body {
+        width: 720px;
+        margin: 0 auto;
+    }
+}
+
+
+div.line {
+    width: 100%;
+    height: 1px;
+    color: #E9EFF3;
+    background-color: #E9EFF3;
+}
+
+.w100 {
+    position: relative;
+    width: 100%;
+}
+
+/****/
+.item-w90 {
+    position: relative;
+    padding-top: 1px;
+    width: 94%;
+    margin: 0 auto;
+}
+
+.item-h20 {
+    height: 18rem;
+}
+/*nav 导航*/
+.nav-top {
+    height: 5rem;
+    background: #fff;
+    font-size: 1.3rem;
+    -webkit-box-shadow: 0 1px 1px 1px rgba(0, 0,0, .05);
+    -ms-box-shadow: 0 1px 1px 1px rgba(0, 0,0, .05);
+    box-shadow: 0 1px 1px 1px rgba(0, 0,0, .05);
+}
+
+    .nav-top .icon {
+        width: 3.4rem;
+        height: 3.4rem;
+        margin: .8rem 10px .8rem 0;
+        -ms-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-box-shadow: 0 1px 1px 1px rgba(0, 0,0, .05);
+        -ms-box-shadow: 0 1px 1px 1px rgba(0, 0,0, .05);
+        box-shadow: 0 1px 1px 1px rgba(0, 0,0, .05);
+    }
+
+    .nav-top .app-name {
+        height: 3.6rem;
+        color: #343434;
+        margin-top: .6rem;
+        vertical-align: top;
+    }
+
+.app-name label {
+    height: 2rem;
+    font-size: 1.4rem;
+    line-height: 2rem;
+}
+
+.app-name p {
+    height: 1.6rem;
+    font-size: 1rem;
+    line-height: 1.6rem;
+}
+
+.nav-top .btn-down {
+    height: 2.2rem;
+    line-height: 2.2rem;
+    font-size: 1rem;
+    float: right;
+    margin-top: 1.4rem;
+    padding: 0 10px 0 10px;
+    border: 1px solid #09cadb;
+    -ms-border-radius: 2px;
+    border-radius: 2px;
+    color: #09cadb;
+}
+
+.main-loading {
+    position: relative;
+    padding-top: 1px;
+    width: 100%;
+    height: 20rem;
+}
+
+.main-content {
+    position: relative;
+    padding-top: 1px;
+    width: 100%;
+}
+
+.main-error {
+    position: relative;
+    padding-top: 1px;
+    width: 100%;
+    height: 20rem;
+    text-align: center;
+    line-height: 20rem;
+    color: rgb(11,197,229);
+}
+/**微信无法打开own图像**/
+.wtip {
+    position: fixed;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    overflow: hidden;
+}
+
+    .wtip img.bg {
+        width: 100%;
+        height: auto;
+    }
+
+    .wtip img.arrow {
+        position: absolute;
+        right: 2rem;
+        top: 0;
+        width: 6rem;
+        height: 10rem;
+    }
+
+    .wtip .txt {
+        position: absolute;
+        left: 0;
+        top: 12rem;
+        width: 100%;
+        text-align: center;
+        height: 3rem;
+        line-height: 2rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+
+/****/
+.input-text {
+    width: 100%;
+    height: 1.4rem;
+    line-height: 1.4rem;
+    padding: 1.1rem 0;
+    font-size: 1.2rem;
+    background: #f5f5f5;
+    border: 0;
+    outline: none;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: rgba(255,0,0,0); /*移除高亮4.0以上无效*/
+    -webkit-user-modify: read-write-plaintext-only; /*4.0以上移除高亮*/
+    outline: none;
+}
+
+
+
+/*动画效果*/
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+
+    40% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
+.fade-out {
+    animation: fade-out; /*动画名称*/
+    animation-duration: 1s; /*动画持续时间*/
+    -webkit-animation: fade-out 1s; /*针对webkit内核*/
+    animation-fill-mode: forwards; /*体制在结束状态*/
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fade-in; /*动画名称*/
+    animation-duration: 1.5s; /*动画持续时间*/
+    -webkit-animation: fade-out 1.5s; /*针对webkit内核*/
+}
+/*loading*/
+
+.floadingwap {
+    position: relative;
+    left: 50%;
+    margin: 10rem 0 0 -10rem;
+    width: 20rem;
+    height: 3rem;
+    text-align: center;
+    color: rgb(11,197,229);
+    font-family: Arial;
+    font-size: 1.5rem;
+    text-decoration: none;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.floading {
+    animation-name: bounce-floading;
+    -o-animation-name: bounce-floading;
+    -ms-animation-name: bounce-floading;
+    -webkit-animation-name: bounce-floading;
+    -moz-animation-name: bounce-floading;
+    animation-duration: 2.09s;
+    -o-animation-duration: 2.09s;
+    -ms-animation-duration: 2.09s;
+    -webkit-animation-duration: 2.09s;
+    -moz-animation-duration: 2.09s;
+    animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+    -ms-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    animation-direction: normal;
+    -o-animation-direction: normal;
+    -ms-animation-direction: normal;
+    -webkit-animation-direction: normal;
+    -moz-animation-direction: normal;
+    transform: scale(.5);
+    -o-transform: scale(.5);
+    -ms-transform: scale(.5);
+    -webkit-transform: scale(.5);
+    -moz-transform: scale(.5);
+}
+
+.floading-1 {
+    animation-delay: 0.75s;
+    -o-animation-delay: 0.75s;
+    -ms-animation-delay: 0.75s;
+    -webkit-animation-delay: 0.75s;
+    -moz-animation-delay: 0.75s;
+}
+
+.floading-2 {
+    animation-delay: 0.9s;
+    -o-animation-delay: 0.9s;
+    -ms-animation-delay: 0.9s;
+    -webkit-animation-delay: 0.9s;
+    -moz-animation-delay: 0.9s;
+}
+
+.floading-3 {
+    animation-delay: 1.05s;
+    -o-animation-delay: 1.05s;
+    -ms-animation-delay: 1.05s;
+    -webkit-animation-delay: 1.05s;
+    -moz-animation-delay: 1.05s;
+}
+
+.floading-4 {
+    animation-delay: 1.2s;
+    -o-animation-delay: 1.2s;
+    -ms-animation-delay: 1.2s;
+    -webkit-animation-delay: 1.2s;
+    -moz-animation-delay: 1.2s;
+}
+
+.floading-5 {
+    animation-delay: 1.35s;
+    -o-animation-delay: 1.35s;
+    -ms-animation-delay: 1.35s;
+    -webkit-animation-delay: 1.35s;
+    -moz-animation-delay: 1.35s;
+}
+
+.floading-6 {
+    animation-delay: 1.5s;
+    -o-animation-delay: 1.5s;
+    -ms-animation-delay: 1.5s;
+    -webkit-animation-delay: 1.5s;
+    -moz-animation-delay: 1.5s;
+}
+
+.floading-7 {
+    animation-delay: 1.64s;
+    -o-animation-delay: 1.64s;
+    -ms-animation-delay: 1.64s;
+    -webkit-animation-delay: 1.64s;
+    -moz-animation-delay: 1.64s;
+}
+
+.floading-8 {
+    animation-delay: 1.79s;
+    -o-animation-delay: 1.79s;
+    -ms-animation-delay: 1.79s;
+    -webkit-animation-delay: 1.79s;
+    -moz-animation-delay: 1.79s;
+}
+
+.floading-9 {
+    animation-delay: 1.94s;
+    -o-animation-delay: 1.94s;
+    -ms-animation-delay: 1.94s;
+    -webkit-animation-delay: 1.94s;
+    -moz-animation-delay: 1.94s;
+}
+
+.floading-10 {
+    animation-delay: 2.09s;
+    -o-animation-delay: 2.09s;
+    -ms-animation-delay: 2.09s;
+    -webkit-animation-delay: 2.09s;
+    -moz-animation-delay: 2.09s;
+}
+
+@keyframes bounc-floading {
+    0% {
+        transform: scale(1);
+        color: rgb(11,197,229);
+    }
+
+    100% {
+        transform: scale(.5);
+        color: rgb(255,255,255);
+    }
+}
+
+@-o-keyframes bounce-floading {
+    0% {
+        -o-transform: scale(1);
+        color: rgb(11,197,229);
+    }
+
+    100% {
+        -o-transform: scale(.5);
+        color: rgb(255,255,255);
+    }
+}
+
+@-ms-keyframes bounce-floading {
+    0% {
+        -ms-transform: scale(1);
+        color: rgb(11,197,229);
+    }
+
+    100% {
+        -ms-transform: scale(.5);
+        color: rgb(255,255,255);
+    }
+}
+
+@-webkit-keyframes bounce-floading {
+    0% {
+        -webkit-transform: scale(1);
+        color: rgb(11,197,229);
+    }
+
+    100% {
+        -webkit-transform: scale(.5);
+        color: rgb(255,255,255);
+    }
+}
+
+@-moz-keyframes bounce-floading {
+    0% {
+        -moz-transform: scale(1);
+        color: rgb(11,197,229);
+    }
+
+    100% {
+        -moz-transform: scale(.5);
+        color: rgb(255,255,255);
+    }
+}

@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewData["Title"] = "重置密码";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .col-sm-3 {
+            width: 25% !important;
+            float: left;
+            padding-top: 7px;
+            margin-bottom: 0;
+            text-align: right;
+        }
+
+        .col-sm-9 {
+            width: 73% !important;
+            float: left;
+        }
+
+        .ibox-content {
+            padding-bottom: 15px !important;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">登录名：</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="LoginName" name="LoginName" disabled class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">真实姓名：</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="RealName" name="RealName" disabled class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">密码：<font face="宋体">*</font></label>
+                        <div class="col-sm-9">
+                            <input type="password" id="Password" name="Password" placeholder="请输入密码" class="form-control" isvalid="yes" checkexpession="NotNull" autocomplete="off">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var userResetForm = function () {
+            var _self = this;
+            _self.id = request("id");
+            _self.InitData = function () {
+                $("#LoginName").val(request("loginName"));
+                $("#RealName").val(request("realName"));
+            }
+
+            return {
+                init: function () {
+                    _self.InitData();
+                },
+                acceptClick: function () {
+                    if (!$("form").Validform()) {
+                        return false;
+                    }
+                    var data = $("form").GetWebControls();
+                    $.SaveForm({
+                        url: "ResetPwd",
+                        param: { id: _self.id, password: $("#Password").val() },
+                        //loading: "正在保存数据...",
+                        success: function (data) {
+                            $.currentIframe().$("#gridTable").trigger("reloadGrid");
+                        }
+                    });
+                }
+            }
+        }();
+        userResetForm.init();
+    </script>
+}
+
+
+

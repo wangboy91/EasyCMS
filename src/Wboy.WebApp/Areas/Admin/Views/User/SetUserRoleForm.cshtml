@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewData["Title"] = "用户角色";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+
+@section styles{
+    <link href="~/js/plugins/tree/tree.css" rel="stylesheet" />
+}
+<div id="itemTree"></div>
+
+
+@section scripts{
+    <script src="~/js/plugins/tree/tree.js"></script>
+    <script type="text/javascript">
+        var userRoleForm = function () {
+            var _self = this;
+            _self.userid = request("userId");
+            _self.GetTree = function () {
+                var item = {
+                    height: $(window).height(),
+                    url: "UserRoleTreeList?userId=" + _self.userid,
+                    showcheck: true,
+                };
+                $("#itemTree").treeview(item);
+            };
+            return {
+                init: function () {
+                    _self.GetTree();
+                },
+                acceptClick: function () {
+                    $.SaveForm({
+                        url: "SetUserRoleForm",
+                        param: { userId: _self.userid, roleIds: $("#itemTree").getCheckedAllNodes() },
+                        //loading: "正在保存数据...",
+                        success: function (data) {
+                            $.currentIframe().$("#gridTable").trigger("reloadGrid");
+                        }
+                    });
+                }
+            }
+        }();
+        userRoleForm.init();
+    </script>
+}
+

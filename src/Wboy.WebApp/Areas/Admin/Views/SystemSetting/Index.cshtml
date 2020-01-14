@@ -1,0 +1,129 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutTable.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <div class="input-group" style="max-width:250px;display:inline-table;">
+                    <input type="text" id="txt_Keyword" class="form-control input-sm">
+                    <span class="input-group-btn">
+                        <a id="btn_Search" class="btn btn-white btn-sm"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+                <div class="ibox-tools">
+                    <div class="btn-group">
+                        <a class="btn btn-white btn-sm" onclick="settingIndex.edit()"><i class="fa fa-pencil"></i> 编辑</a>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="jqGrid_wrapper">
+                    <table id="gridTable"></table>
+                    <div id="gridPager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        var settingIndex = function () {
+            var _self = this;
+            //初始化页面
+            _self.InitialPage = function () {
+                //resize重设(表格、树形)宽高
+                $(window).resize(function (e) {
+                    window.setTimeout(function () {
+                        $('#gridTable').setGridWidth(($('.jqGrid_wrapper').width()));
+                        $("#gridTable").setGridHeight($(window).height() - 208);
+                    }, 200);
+                    e.stopPropagation();
+                });
+            }
+            _self.GetGrid = function () {
+                var selectedRowIndex = 0;
+                $.jgrid.defaults.styleUI = "Bootstrap";
+                var $gridTable = $('#gridTable');
+                $gridTable.jqGrid({
+                    url: 'GetPageList',
+                    datatype: "json",
+                    height: $(window).height() - 208,
+                    autowidth: true,
+                    colModel: [
+                        { label: 'id', name: 'id', index: 'id', width: 60, key: true, hidden: true },
+                        { label: 'Key', name: 'key', index: 'key', width: 100 },
+                        { label: 'Value', name: 'value', index: 'value', width: 180 },
+                        { label: '数据类型', name: 'dataType', index: 'dataType', width: 60 },
+                        { label: "描述", name: "description", index: "description", width: 100},
+                        {
+                            label: '添加时间', name: 'addTime', index: 'addTime', width: 50,
+                            formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i', newformat: 'Y-m-d H:i' }
+                        },
+                        {
+                            label: '修改时间', name: 'updateTime', index: 'updateTime', width: 50,
+                            formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i', newformat: 'Y-m-d H:i' }
+                        }
+                    ],
+                    rowNum: 30,
+                    rowList: [30, 50, 100],
+                    pager: "#gridPager",
+                    rownumbers: true,
+                    viewrecords: true,
+                    onSelectRow: function () {
+                        selectedRowIndex = $("#" + this.id).getGridParam('selrow');
+                    },
+                    gridComplete: function () {
+                        $("#" + this.id).setSelection(selectedRowIndex, false);
+                    }
+                });
+
+                //查询事件
+                $("#btn_Search").click(function () {
+                    $gridTable.jqGrid('setGridParam', {
+                        postData: { keywords: $("#txt_Keyword").val() }, page: 1
+                    }).trigger('reloadGrid');
+                });
+                //查询回车
+                $('#txt_Keyword').bind('keypress', function (event) {
+                    if (event.keyCode == "13") {
+                        $('#btn_Search').trigger("click");
+                    }
+                });
+            }
+            return {
+                init: function () {
+                    _self.InitialPage();
+                    _self.GetGrid();
+                },
+                edit: function () {
+                    var id = $("#gridTable").jqGridRowValue("id");
+                    if (id) {
+                        dialogOpen({
+                            id: 'form',
+                            title: '编辑配置',
+                            width: '550px',
+                            height: '404px',
+                            url: '/Admin/SystemSetting/Form?id=' + id,
+                            callBack: function (iframe) {
+                                iframe.settingForm.acceptClick();
+                            }
+                        });
+                    }
+                    else {
+                        dialogMsg("请选择需要编辑的配置！", 3);
+                        return false;
+                    }
+
+                }
+            }
+        }();
+        settingIndex.init();
+    </script>
+}
+
+

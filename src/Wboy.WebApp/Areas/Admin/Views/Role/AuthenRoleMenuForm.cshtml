@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewData["Title"] = "角色菜单权限";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+
+@section styles{
+    <link href="~/js/plugins/tree/tree.css" rel="stylesheet" />
+    <style type="text/css">
+    </style>
+}
+<div id="itemTree"></div>
+
+@section scripts{
+    <script src="~/js/plugins/tree/tree.js"></script>
+    <script type="text/javascript">
+        var authenRoleForm = function () {
+            var _self = this;
+            _self.roleid = request("roleId");
+            _self.GetTree = function () {
+                var item = {
+                    height: $(window).height(),
+                    url: "AuthenRoleMenuTreeList?roleId=" + _self.roleid,
+                    showcheck: true,
+                };
+                $("#itemTree").treeview(item);
+            };
+            return {
+                init: function () {
+                    _self.GetTree();
+                },
+                acceptClick: function () {
+                    $.SaveForm({
+                        url: "AuthenRoleMenuForm",
+                        param: { roleId: _self.roleid, menuIds: $("#itemTree").getCheckedAllNodes() },
+                        //loading: "正在保存数据...",
+                        success: function (data) {
+                            $.currentIframe().$("#gridTable").trigger("reloadGrid");
+                        }
+                    });
+                }
+            }
+        }();
+        authenRoleForm.init();
+    </script>
+}
+
