@@ -1,0 +1,5 @@
+﻿aliyun-netCore-oss-sdk
+aliyun-netCore-sdk-core
+aliyun-netCore-sdk-dysmsapi
+是根据官方的源码修改而来
+https://github.com/wangboy91/aliyun-netCore

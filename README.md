@@ -40,5 +40,10 @@ Add-Migration   添加新的生成
 
 Update-Database  更新数据库
 
+## ![home](/doc/home.png)
 
+### 未来迭代计划
 
+1. 完善灵活的权限管理 
+2. 修改前后端分离方案增加webapi接口
+3. 增加分布式账号方案
