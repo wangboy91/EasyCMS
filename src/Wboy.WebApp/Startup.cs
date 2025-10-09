@@ -26,7 +26,9 @@ namespace Wboy.WebApp
                 .AddEnvironmentVariables();
             this.Configuration = builder.Build();
         }
+
         public IConfigurationRoot Configuration { get; private set; }
+
         // called by the runtime before the Configure method, below.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -36,15 +38,14 @@ namespace Wboy.WebApp
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddMvc().AddJsonOptions(options =>
-            {
-                //json数据格式化排版
-                options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
-                //使用驼峰命名法样式的key
-                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
-                //设置时间格式
-                options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-            }).AddControllersAsServices();
+            //权限验证filter
+            services.AddMvc(cfg => { cfg.Filters.Add(new RightFilter()); }).AddControllersAsServices()
+                //ASP.NET Core 3.0 之前，Newtonsoft.Json 是 ASP.NET Core 默认的 JSON 序列化库。
+                //如果你将 Newtonsoft.Json 添加到项目中，它将自动成为默认的 JSON 序列化器。
+                //但是在 ASP.NET Core 3.0 及以后的版本中，Microsoft 将 System.Text.Json 作为默认的 JSON 序列化器。
+                //需要显式设置序列化方式
+                .AddNewtonsoftJson();
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o =>
                 {
@@ -54,18 +55,12 @@ namespace Wboy.WebApp
                     o.Cookie = new CookieBuilder
                     {
                         HttpOnly = true,
-                        Name = ".Own.SXH.Core.Identity",//Cookie名字
+                        Name = ".Own.SXH.Core.Identity", //Cookie名字
                         Path = "/" //安全
                         //Path = ".sumxiang.com" //安全
                     };
                     //o.DataProtectionProvider = null;//如果需要做负载均衡，就需要提供一个Key
                 });
-
-            //权限验证filter
-            services.AddMvc(cfg =>
-            {
-                cfg.Filters.Add(new RightFilter());
-            });
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -82,8 +77,8 @@ namespace Wboy.WebApp
 
 
             return new AutofacServiceProvider(Wboy.Infrastructure.Core.SampleContext.Current.Container);
-
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -97,9 +92,6 @@ namespace Wboy.WebApp
                 app.UseStatusCodePagesWithReExecute("/Home/Error");
                 app.UseHsts();
             }
-
-
-            app.UseStaticFiles();
             //app.UseStaticFiles(new StaticFileOptions()
             //{
             //    //下面设置可以下载apk和nupkg类型的文件
@@ -111,36 +103,20 @@ namespace Wboy.WebApp
             //    })
 
             //});
-            app.UseAuthentication();
-
-
+            
             app.UseMiddleware<VisitMiddleware>();
-
-            if (env.IsDevelopment())
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                app.UseMvc(routes =>
-                {
-                    routes.MapRoute(
-                        name: "areas",
-                        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                    );
-                    routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
-                });
-            }
-            else
-            {
-                app.UseMvc(routes =>
-                {
-                    routes.MapRoute(
-                        name: "areas",
-                        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                    );
-                    routes.MapRoute(name: "default", template: "{controller=Home}/{action=Front}/{id?}");
-                });
-            }
-
-
+                endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                );
+                endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
-
     }
 }

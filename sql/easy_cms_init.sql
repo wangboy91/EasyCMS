@@ -354,4 +354,6 @@ CREATE TABLE `__efmigrationshistory` (
 -- ----------------------------
 -- Records of __efmigrationshistory
 -- ----------------------------
+/*
 INSERT INTO `__efmigrationshistory` VALUES ('20181125121153_init', '2.1.4-rtm-31024');
+*/
